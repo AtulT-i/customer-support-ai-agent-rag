@@ -1,4 +1,4 @@
-﻿# Spotify Support Intelligence — Guardrailed RAG AI Agent
+# Spotify Support Intelligence — Guardrailed RAG AI Agent
 
 [![Python 3.12+](https://img.shields.io/badge/python-3.12+-blue.svg)](https://www.python.org/)
 [![Scikit-Learn](https://img.shields.io/badge/ML-scikit--learn-orange.svg)](https://scikit-learn.org/)
@@ -182,8 +182,8 @@ Incoming Customer Message
 
 1. **Clone the repository:**
    ```powershell
-   git clone https://github.com/AtulT-i/Spotify-Support-RAG-Agent.git
-   cd Spotify-Support-RAG-Agent
+   git clone https://github.com/AtulT-i/customer-support-ai-agent-rag.git
+   cd customer-support-ai-agent-rag
    ```
 
 2. **Create and activate a virtual environment:**
