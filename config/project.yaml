@@ -1,0 +1,74 @@
+brand: SpotifyCares
+random_seed: 42
+candidate_brands:
+  - SpotifyCares
+  - AppleSupport
+  - AmazonHelp
+
+data:
+  raw_csv: data/raw/twcs/twcs.csv
+  pairs_csv: data/processed/spotify_pairs.csv
+  label_queue_csv: data/labels/label_queue.csv
+  weak_labels_csv: data/labels/weak_labels.csv
+  train_labels_csv: data/labels/train.csv
+  golden_csv: data/labels/golden.csv
+  human_scores_csv: data/labels/human_reply_scores.csv
+  model_path: artifacts/intent_model.joblib
+  retrieval_path: artifacts/retrieval.joblib
+  predictions_path: artifacts/predictions.csv
+
+intents:
+  - account_access
+  - billing_subscription
+  - playback_app_issue
+  - account_security
+  - feature_availability
+  - plan_change_cancel
+  - service_outage
+  - complaint_feedback
+  - other_unclear
+
+policy:
+  intent_confidence_threshold: 0.72
+  intent_margin_threshold: 0.15
+  retrieval_similarity_threshold: 0.35
+  always_escalate_intents:
+    - account_security
+    - billing_subscription
+    - plan_change_cancel
+  auto_handle_intents:
+    - account_access
+    - playback_app_issue
+    - feature_availability
+  risk_terms:
+    - hacked
+    - stolen
+    - fraud
+    - chargeback
+    - unauthorized
+    - unauthorised
+    - compromised
+    - refund
+    - charged
+    - cancel
+    - legal
+    - lawsuit
+    - privacy
+    - suicidal
+    - threat
+
+retrieval:
+  max_corpus_size: 30000
+  max_features: 40000
+  top_k: 3
+
+reply_templates:
+  account_access: "Sorry you're having trouble getting into your account. Please do not share credentials or personal details here."
+  billing_subscription: "I understand the billing concern. For your privacy, please do not post payment or account details publicly. A support specialist should review the account-specific charge."
+  playback_app_issue: "Sorry about the playback problem. Could you share your device, app version, and whether it happens on another network?"
+  account_security: "Please secure your account immediately and do not share credentials publicly. This needs review by an account-security specialist."
+  feature_availability: "Thanks for checking. Please share the feature and device you are asking about."
+  plan_change_cancel: "A support specialist should review this plan-change request. No account change has been performed by this demo."
+  service_outage: "Please check the current official service status. This demo cannot verify a live outage."
+  complaint_feedback: "Thanks for raising this, and sorry for the frustration. A support specialist should review your feedback."
+  other_unclear: "Thanks for contacting us. Could you share what you expected, what happened instead, and the device or platform involved?"

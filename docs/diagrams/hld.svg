@@ -1,0 +1,109 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="900" viewBox="0 0 1200 900" style="max-width:100%;height:auto;display:block" role="img" aria-labelledby="title desc">
+  <title id="title">Local Spotify support assistant: high-level design</title>
+  <desc id="desc">Offline preparation creates the classifier and golden-excluded retrieval index. Local prediction classifies, retrieves, applies safety gates and constructs a draft or recommends human review. Offline evaluation checks provenance and compares the main system with baselines. Optional Ollama selects evidence or judges replies; no real support actions are performed.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#cbd5e1"/></marker>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #f8fafc; font-size: 18px; }
+      .title { font-size: 28px; font-weight: 700; }
+      .heading { font-size: 22px; font-weight: 700; fill: #93c5fd; }
+      .small { font-size: 16px; fill: #cbd5e1; }
+      .panel { fill: #111827; stroke: #64748b; stroke-width: 2; }
+      .node { fill: #1e293b; stroke: #93c5fd; stroke-width: 2; }
+      .optional { fill: #302047; stroke: #d8b4fe; stroke-width: 2; stroke-dasharray: 6 4; }
+      .result { fill: #14332b; stroke: #6ee7b7; stroke-width: 2; }
+      .edge { fill: none; stroke: #cbd5e1; stroke-width: 2; marker-end: url(#arrow); }
+    </style>
+  </defs>
+  <!-- Opaque background keeps contrast independent of the editor theme. -->
+  <rect width="1200" height="900" rx="16" fill="#0b1220"/>
+  <text x="36" y="48" class="title">Local Spotify Support Assistant — HLD</text>
+  <text x="36" y="78" class="small">Local files + Python pipeline • Extractive RAG by default • Ollama optional</text>
+
+  <rect x="24" y="106" width="356" height="690" rx="14" class="panel"/>
+  <rect x="422" y="106" width="356" height="690" rx="14" class="panel"/>
+  <rect x="820" y="106" width="356" height="690" rx="14" class="panel"/>
+  <text x="48" y="143" class="heading">1. Offline preparation</text>
+  <text x="446" y="143" class="heading">2. Local prediction</text>
+  <text x="844" y="143" class="heading">3. Offline evaluation</text>
+
+  <rect x="44" y="170" width="316" height="64" rx="8" class="node"/>
+  <text x="202" y="197" text-anchor="middle">Historical Twitter dataset</text>
+  <text x="202" y="220" text-anchor="middle" class="small">SpotifyCares support exchanges</text>
+  <path d="M202 234 V260" class="edge"/>
+  <rect x="44" y="264" width="316" height="64" rx="8" class="node"/>
+  <text x="202" y="291" text-anchor="middle">Clean customer / reply pairs</text>
+  <text x="202" y="314" text-anchor="middle" class="small">Redaction, deduplication, thread IDs</text>
+  <path d="M202 328 V354" class="edge"/>
+  <rect x="44" y="358" width="316" height="78" rx="8" class="node"/>
+  <text x="202" y="385" text-anchor="middle">Human labels and frozen split</text>
+  <text x="202" y="409" text-anchor="middle" class="small">Training / golden evaluation data</text>
+  <text x="202" y="429" text-anchor="middle" class="small">Alternative: weak labels for demo only</text>
+  <path d="M202 436 V462" class="edge"/>
+  <rect x="44" y="466" width="316" height="88" rx="8" class="node"/>
+  <text x="202" y="493" text-anchor="middle">Build two separate artifacts</text>
+  <text x="202" y="517" text-anchor="middle" class="small">Intent: word + char TF-IDF / LogReg</text>
+  <text x="202" y="540" text-anchor="middle" class="small">Retrieval: exclude golden before fitting</text>
+  <path d="M202 554 V580" class="edge"/>
+  <rect x="44" y="584" width="316" height="78" rx="8" class="result"/>
+  <text x="202" y="612" text-anchor="middle">Saved model + retrieval index</text>
+  <text x="202" y="637" text-anchor="middle" class="small">Version and input-file fingerprints</text>
+  <text x="48" y="712" class="small">Classifier predicts the intent.</text>
+  <text x="48" y="738" class="small">Retrieval finds historical evidence.</text>
+  <text x="48" y="764" class="small">They are not the same trained model.</text>
+
+  <rect x="442" y="170" width="316" height="64" rx="8" class="node"/>
+  <text x="600" y="197" text-anchor="middle">User message → Streamlit / CLI</text>
+  <text x="600" y="220" text-anchor="middle" class="small">Validate and normalize input</text>
+  <path d="M600 234 V260" class="edge"/>
+  <rect x="442" y="264" width="316" height="64" rx="8" class="node"/>
+  <text x="600" y="291" text-anchor="middle">SupportAgent: classify + retrieve</text>
+  <text x="600" y="314" text-anchor="middle" class="small">Intent probabilities and top 3 threads</text>
+  <path d="M360 623 H399 V296 H438" class="edge"/>
+  <path d="M600 328 V354" class="edge"/>
+  <rect x="442" y="358" width="316" height="78" rx="8" class="node"/>
+  <text x="600" y="385" text-anchor="middle">Risk and confidence policy</text>
+  <text x="600" y="409" text-anchor="middle" class="small">Intent allowlist, margin, similarity</text>
+  <text x="600" y="429" text-anchor="middle" class="small">Unsafe or uncertain → human review</text>
+  <path d="M600 436 V462" class="edge"/>
+  <rect x="442" y="466" width="316" height="88" rx="8" class="node"/>
+  <text x="600" y="493" text-anchor="middle">For eligible cases: safe guidance</text>
+  <text x="600" y="517" text-anchor="middle" class="small">Filter historical reply suggestions</text>
+  <text x="600" y="540" text-anchor="middle" class="small">No suitable evidence → human review</text>
+  <path d="M600 554 V580" class="edge"/>
+  <rect x="442" y="584" width="316" height="78" rx="8" class="optional"/>
+  <text x="600" y="612" text-anchor="middle">Select evidence, not new claims</text>
+  <text x="600" y="637" text-anchor="middle" class="small">Default: first safe; optional: Ollama</text>
+  <path d="M600 662 V688" class="edge"/>
+  <rect x="442" y="692" width="316" height="76" rx="8" class="result"/>
+  <text x="600" y="721" text-anchor="middle">Cited draft OR escalation draft</text>
+  <text x="600" y="747" text-anchor="middle" class="small">Decision, reason and evidence IDs</text>
+
+  <rect x="840" y="170" width="316" height="64" rx="8" class="node"/>
+  <text x="998" y="197" text-anchor="middle">Frozen human-labelled golden set</text>
+  <text x="998" y="220" text-anchor="middle" class="small">Required before headline scoring</text>
+  <path d="M998 234 V260" class="edge"/>
+  <rect x="840" y="264" width="316" height="64" rx="8" class="node"/>
+  <text x="998" y="291" text-anchor="middle">Validate provenance and leakage</text>
+  <text x="998" y="314" text-anchor="middle" class="small">Reject weak models and data overlap</text>
+  <path d="M998 328 V354" class="edge"/>
+  <rect x="840" y="358" width="316" height="78" rx="8" class="node"/>
+  <text x="998" y="385" text-anchor="middle">Run main agent and two baselines</text>
+  <text x="998" y="409" text-anchor="middle" class="small">Same golden examples for each system</text>
+  <path d="M998 436 V462" class="edge"/>
+  <rect x="840" y="466" width="316" height="88" rx="8" class="result"/>
+  <text x="998" y="493" text-anchor="middle">Intent and escalation metrics</text>
+  <text x="998" y="517" text-anchor="middle" class="small">Macro F1, must-escalate recall</text>
+  <text x="998" y="540" text-anchor="middle" class="small">False-auto risk and auto-handle coverage</text>
+  <path d="M998 554 V580" class="edge"/>
+  <rect x="840" y="584" width="316" height="78" rx="8" class="optional"/>
+  <text x="998" y="612" text-anchor="middle">Optional Ollama reply judge</text>
+  <text x="998" y="637" text-anchor="middle" class="small">Paired scoring and content-keyed cache</text>
+  <path d="M998 662 V688" class="edge"/>
+  <rect x="840" y="692" width="316" height="76" rx="8" class="node"/>
+  <text x="998" y="721" text-anchor="middle">Compare with human reply scores</text>
+  <text x="998" y="747" text-anchor="middle" class="small">Grounding, relevance, tone and safety</text>
+
+  <text x="36" y="836">Draft-only boundary: no outgoing messages, tickets, refunds or account changes.</text>
+  <text x="36" y="867" class="small">Tested pipeline ≠ verified model accuracy. Human-reviewed training and golden labels are still required.</text>
+</svg>
